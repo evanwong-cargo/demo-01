@@ -18,6 +18,8 @@ public class DemoApplication {
          *  ClassStruct 类型
          *  ClassStruct.class 类型对象
          *
+         *  git test 111
+         *
          */
 
         /*Class cs0 = Class.forName("jvm.ClassStruct");
