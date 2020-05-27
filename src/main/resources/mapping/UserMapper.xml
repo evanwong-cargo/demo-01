@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.example.mapper.UserMapper">
+
+    <resultMap id="UserResultMap" type="com.example.entity.User">
+        <result column="user_id" jdbcType="INTEGER" property="userId" />
+        <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    </resultMap>
+
+    <!--
+        如果使用 select * 来查询的，那么实体类中的属性必须和数据表中对应的字段一模一样
+        如果使用 select 字段名 as 别名来查询的，那么实体类中的属性必须和你取的别名对应
+        总之，你查询出来的字段和你实体类中对应的属性名必须一致
+
+        通常采用 resultMap 来专门处理数据库字段和实体类属性之间的映射关系
+
+        parameterType="java.lang.Integer"
+
+        select user_id as 'userId', user_name as 'userName' from testa where user_id = #{id}
+     -->
+    <select id="getById" resultMap="UserResultMap" >
+        select * from testa where user_id = #{id}
+    </select>
+
+</mapper>
