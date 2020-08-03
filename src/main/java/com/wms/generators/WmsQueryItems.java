@@ -7,23 +7,9 @@ import java.util.Map;
 
 /**
  * 根据 query.hbm.xml 中的 SQL 语句，生成对应的 query.item
- * <p>
- * xml 查询返回字段如下
- * cdsk.cdsk_sku_code
- * <p>
- * 生成字段
- * private String cdskSkuCode;
- * <p>
- * 生成 get/set 方法
  *
- * @Column(name = "cdsk_sku_code")
- * public String getCdskSkuCode() {
- * return cdskSkuCode;
- * }
- * <p>
- * public void setCdskSkuCode(String cdskSkuCode) {
- * this.cdskSkuCode = cdskSkuCode;
- * }
+ * 读取模板文件 ： sql_colums.txt
+ *
  */
 public class WmsQueryItems {
 
@@ -31,27 +17,25 @@ public class WmsQueryItems {
         try {
 
             // 读取内容
-            String txt = readFile();
+            String txt = readFile("sql_colums.txt");
 
             // 清除所有空格和不可见字符
             txt = txt.replaceAll("\\s*", "");
 
-            System.out.println(txt);
-
             // 获取字段
             Map<String, String> map = getFields(txt, ",");
 
-            StringBuffer sb = new StringBuffer();
+            StringBuffer codeSegment = new StringBuffer();
 
             /*-------------------------------------------------------
                 构建字段
             -------------------------------------------------------*/
             for (Map.Entry<String, String> entry : map.entrySet()) {
                 String value = entry.getValue();
-                sb.append("private String ").append(value).append(";\n");
+                codeSegment.append("private String ").append(value).append(";\n");
             }
 
-            sb.append("\n\n\n");
+            codeSegment.append("\n\n\n");
 
             /*-------------------------------------------------------
                 构建方法
@@ -61,19 +45,19 @@ public class WmsQueryItems {
                 String value = entry.getValue();
 
                 // getter
-                sb.append("@Column(name=\"").append(key).append("\")").append("\n"); // 持久化注解
-                sb.append("public String get").append(firstLetterUpperCase(value)).append("() {");
-                sb.append("return ").append(value).append(";");
-                sb.append("}").append("\n");
+                codeSegment.append("@Column(name=\"").append(key).append("\")").append("\n"); // 持久化注解
+                codeSegment.append("public String get").append(firstLetterUpperCase(value)).append("() {");
+                codeSegment.append("return ").append(value).append(";");
+                codeSegment.append("}").append("\n");
 
                 // setter
-                sb.append("public void set").append(firstLetterUpperCase(value)).append("(").append("String ").append(value).append(") {");
-                sb.append("this.").append(value).append("=").append(value).append(";");
-                sb.append("}").append("\n");
+                codeSegment.append("public void set").append(firstLetterUpperCase(value)).append("(").append("String ").append(value).append(") {");
+                codeSegment.append("this.").append(value).append("=").append(value).append(";");
+                codeSegment.append("}").append("\n");
             }
 
             System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n\n");
-            System.out.println(sb.toString());
+            System.out.println(codeSegment.toString());
             System.out.println("\n\n\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 
         } catch (Exception e) {
@@ -87,22 +71,23 @@ public class WmsQueryItems {
      *
      * @return
      */
-    private static String readFile() {
-        String fileContent = null;
+    private static String readFile(String sourceFileName) throws Exception {
+        String fileContent = new String();
         try {
-            fileContent = new String();
+            // 文件输入流
+            InputStream ins = WmsQueryItems.class.getClassLoader().getResourceAsStream(sourceFileName);
 
-            InputStream ins = WmsQueryItems.class.getClassLoader().getResourceAsStream("sql_colums.txt");
-
-            ByteArrayOutputStream outputstream = new ByteArrayOutputStream();
+            // 按固定长度字节数组读取
+            ByteArrayOutputStream ops = new ByteArrayOutputStream();
             byte[] str_b = new byte[1024];
             int i = -1;
             while ((i = ins.read(str_b)) > 0) {
-                outputstream.write(str_b, 0, i);
+                ops.write(str_b, 0, i);
             }
-            fileContent = outputstream.toString();
+
+            fileContent = ops.toString();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new Exception("read file error : " + e.getMessage());
         }
         return fileContent;
     }

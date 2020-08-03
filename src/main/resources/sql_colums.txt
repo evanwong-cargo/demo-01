@@ -11,4 +11,5 @@ wmio.wmio_reference1,
        wmis.wmis_owner_code,
        wmis.wmis_sku_code,
        wmis.wmis_expectedqty,
-       wmis.wmis_receivedqty
+       wmis.wmis_receivedqty,
+       wmis.ehhe
