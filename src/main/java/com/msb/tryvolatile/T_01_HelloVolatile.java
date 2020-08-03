@@ -16,6 +16,12 @@ public class T_01_HelloVolatile {
 
     public static void main(String[] args) {
 
+        Class cString = String.class; // Class 类型的对象
+        Class cInt = Integer.class;
+
+        String sa = new String("aaa"); // String 类型的对象
+        String sb = new String("bbb");
+
         T_01_HelloVolatile hv = new T_01_HelloVolatile();
 
 
@@ -42,8 +48,11 @@ public class T_01_HelloVolatile {
             当 running 无 volatile 修饰时
             - 数值变化仅影响本线程相关的 CPU 缓存
          */
+
         System.out.println( Thread.currentThread().getName() + " before : " + hv.running);
+
         hv.running = false;
+
         System.out.println( Thread.currentThread().getName() + " after : " + hv.running);
     }
 
